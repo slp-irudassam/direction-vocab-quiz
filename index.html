@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>방향 쏙쏙 퀴즈</title>
+</head>
+<body style="margin:0;">
+<title>방향 쏙쏙 퀴즈</title>
+<style>
+  :root {
+    --paper: #FBF7EF;
+    --card: #FFFFFF;
+    --ink: #2F3A33;
+    --ink-soft: #6B7568;
+    --green: #5B8C5A;
+    --green-deep: #3A5A3A;
+    --coral: #E07A5F;
+    --blue: #4A7FB5;
+    --purple: #9B7FC4;
+    --line: #D8D2C4;
+  }
+  #bq-app, #bq-app * { box-sizing: border-box; }
+  #bq-app {
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 20px 14px 40px;
+    line-height: 1.5;
+  }
+  .bq-wrap { max-width: 600px; margin: 0 auto; }
+
+  .bq-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .bq-logo { font-size: 22px; font-weight: 900; color: var(--green-deep); }
+  .bq-logo small { font-weight: 600; color: var(--ink-soft); font-size: 13px; display: block; }
+
+  .bq-card {
+    background: var(--card);
+    border: 3px solid var(--line);
+    border-radius: 24px;
+    padding: 26px 22px;
+    box-shadow: 0 6px 0 rgba(58,90,58,.12);
+  }
+
+  /* ── 홈 ── */
+  .bq-home-title { font-size: 30px; font-weight: 900; text-align: center; color: var(--green-deep); text-wrap: balance; }
+  .bq-home-sub { text-align: center; color: var(--ink-soft); font-size: 16px; margin: 6px 0 22px; }
+  .bq-modes { display: flex; flex-direction: column; gap: 14px; }
+  .bq-mode {
+    display: flex; align-items: center; gap: 16px;
+    border: 3px solid; border-radius: 20px;
+    background: var(--card);
+    padding: 16px 20px;
+    font-size: 24px; font-weight: 800; color: var(--ink);
+    cursor: pointer;
+    box-shadow: 0 5px 0;
+    transition: transform .08s;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+  }
+  .bq-mode:active { transform: translateY(4px); box-shadow: 0 1px 0; }
+  .bq-mode:focus-visible { outline: 4px solid var(--blue); outline-offset: 2px; }
+  .bq-mode .ic { font-size: 34px; }
+  .bq-mode .sub { display: block; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+  .bq-mode.m1 { border-color: var(--coral); box-shadow-color: var(--coral); box-shadow: 0 5px 0 var(--coral); }
+  .bq-mode.m2 { border-color: var(--blue); box-shadow: 0 5px 0 var(--blue); }
+  .bq-mode.m3 { border-color: var(--purple); box-shadow: 0 5px 0 var(--purple); }
+  .bq-mode.m4 { border-color: var(--green); box-shadow: 0 5px 0 var(--green); }
+
+  .bq-records { margin-top: 22px; }
+  .bq-records h3 { font-size: 15px; color: var(--ink-soft); letter-spacing: .05em; margin: 0 0 8px; }
+  .bq-record {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--card); border: 2px solid var(--line); border-radius: 12px;
+    padding: 8px 14px; margin-bottom: 6px; font-size: 15px;
+  }
+  .bq-record b { color: var(--green-deep); }
+  .bq-empty { color: var(--ink-soft); font-size: 14px; }
+
+  /* ── 퀴즈 ── */
+  .bq-progress { display: flex; gap: 6px; justify-content: center; margin-bottom: 18px; }
+  .bq-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #EDE8DC; border: 2px solid var(--line);
+  }
+  .bq-dot.now { border-color: var(--green); background: #fff; }
+  .bq-dot.ok { background: var(--green); border-color: var(--green); }
+  .bq-dot.retry { background: var(--coral); border-color: var(--coral); }
+
+  .bq-qtext {
+    font-size: 26px; font-weight: 800; text-align: center;
+    text-wrap: balance; margin: 0 0 6px;
+  }
+  .bq-visual {
+    min-height: 150px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 8px 0 18px;
+  }
+  .bq-scene { display: flex; align-items: center; gap: 34px; font-size: 62px; }
+  .bq-scene .ref { font-size: 74px; }
+  .bq-bigword {
+    width: 130px; height: 130px; border-radius: 50%;
+    background: var(--paper); border: 5px solid var(--purple);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; font-weight: 900; color: var(--purple);
+  }
+  .bq-arrow { font-size: 96px; line-height: 1; }
+
+  .bq-choices { display: flex; gap: 14px; }
+  .bq-choice {
+    flex: 1;
+    border: 4px solid var(--green); border-radius: 20px;
+    background: var(--card); color: var(--ink);
+    font-size: 30px; font-weight: 900; font-family: inherit;
+    padding: 22px 8px; cursor: pointer;
+    box-shadow: 0 5px 0 var(--green);
+    transition: transform .08s;
+  }
+  .bq-choice:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--green); }
+  .bq-choice:focus-visible { outline: 4px solid var(--blue); outline-offset: 2px; }
+  .bq-choice:disabled { opacity: .55; cursor: default; }
+  .bq-choice.correct { background: var(--green); color: #fff; }
+  .bq-choice.wrong { border-color: var(--coral); box-shadow: 0 5px 0 var(--coral); background: #FDF1EC; }
+
+  .bq-feedback {
+    min-height: 74px; margin-top: 16px; text-align: center;
+    font-size: 21px; font-weight: 800;
+  }
+  .bq-feedback .fb-ok { color: var(--green-deep); }
+  .bq-feedback .fb-no { color: var(--coral); }
+  .bq-hint {
+    display: inline-block; margin-top: 6px;
+    background: #EEF4FB; border: 2px dashed var(--blue); border-radius: 12px;
+    padding: 6px 14px; font-size: 17px; font-weight: 600; color: var(--ink);
+  }
+  @keyframes bq-pop { 0% { transform: scale(.6); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+  @keyframes bq-shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+  .bq-feedback .fb-ok { animation: bq-pop .35s; display: inline-block; }
+  .bq-feedback .fb-no { animation: bq-shake .3s; display: inline-block; }
+  @media (prefers-reduced-motion: reduce) {
+    .bq-feedback .fb-ok, .bq-feedback .fb-no { animation: none; }
+    .bq-mode, .bq-choice { transition: none; }
+  }
+
+  .bq-quit {
+    display: block; margin: 16px auto 0;
+    background: none; border: none; font-family: inherit;
+    color: var(--ink-soft); font-size: 14px; cursor: pointer; text-decoration: underline;
+  }
+
+  /* ── 결과 ── */
+  .bq-result { text-align: center; }
+  .bq-stars { font-size: 66px; letter-spacing: 8px; margin: 10px 0; }
+  .bq-result-title { font-size: 30px; font-weight: 900; color: var(--green-deep); }
+  .bq-result-msg { font-size: 19px; color: var(--ink-soft); margin: 8px 0 24px; }
+  .bq-result-score { font-size: 21px; font-weight: 800; margin-bottom: 20px; }
+  .bq-again {
+    border: 4px solid var(--green); border-radius: 20px;
+    background: var(--green); color: #fff;
+    font-size: 26px; font-weight: 900; font-family: inherit;
+    padding: 16px 40px; cursor: pointer;
+    box-shadow: 0 5px 0 var(--green-deep);
+    margin: 0 6px 10px;
+  }
+  .bq-other {
+    border: 4px solid var(--line); border-radius: 20px;
+    background: var(--card); color: var(--ink);
+    font-size: 20px; font-weight: 800; font-family: inherit;
+    padding: 16px 26px; cursor: pointer;
+    box-shadow: 0 5px 0 var(--line);
+    margin: 0 6px 10px;
+  }
+  .bq-again:active, .bq-other:active { transform: translateY(4px); box-shadow: none; }
+
+  @media (max-width: 430px) {
+    .bq-qtext { font-size: 22px; }
+    .bq-choice { font-size: 25px; padding: 18px 6px; }
+    .bq-scene { gap: 20px; font-size: 48px; }
+    .bq-scene .ref { font-size: 58px; }
+  }
+</style>
+
+<div id="bq-app">
+  <div class="bq-wrap">
+    <div class="bq-top">
+      <div class="bq-logo">🧭 방향 쏙쏙 퀴즈<small>가로·세로·왼쪽·오른쪽·좌·우</small></div>
+    </div>
+    <div class="bq-card" id="bq-screen"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var TOTAL = 10;
+  var screenEl = document.getElementById('bq-screen');
+
+  /* ── 유틸 ── */
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function flip() { return Math.random() < 0.5; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  var HINT_GS = '누워 있으면 가로 🛌, 서 있으면 세로 🧍';
+  var HINT_LR = '심장이 콩닥콩닥 뛰는 쪽이 왼쪽이에요 ❤️';
+  var HINT_JW = '"우~!" 하면 "오른쪽!" 좌는 남은 쪽, 왼쪽!';
+  var PRAISE = ['딩동댕! 맞았어요!', '참 잘했어요!', '우와, 대단해요!', '정확해요!', '최고예요!', '방향 박사님이네요!'];
+
+  var COLORS = ['#E07A5F', '#4A7FB5', '#5B8C5A', '#E0A93E', '#9B7FC4'];
+
+  /* ── 시각자료 생성 ── */
+  function barSvg(horizontal, color) {
+    return horizontal
+      ? '<svg viewBox="0 0 260 130" width="240" height="120"><rect x="30" y="53" width="200" height="26" rx="13" fill="' + color + '"/></svg>'
+      : '<svg viewBox="0 0 260 130" width="240" height="120"><rect x="117" y="10" width="26" height="110" rx="13" fill="' + color + '"/></svg>';
+  }
+  function paperSvg(landscape) {
+    return landscape
+      ? '<svg viewBox="0 0 260 130" width="240" height="120"><rect x="35" y="25" width="190" height="85" fill="#fff" stroke="#6B7568" stroke-width="4" rx="4"/></svg>'
+      : '<svg viewBox="0 0 260 150" width="220" height="140"><rect x="90" y="8" width="80" height="134" fill="#fff" stroke="#6B7568" stroke-width="4" rx="4"/></svg>';
+  }
+  function gridSvg(isRow, idx, color) {
+    var s = '<svg viewBox="0 0 160 160" width="150" height="150">';
+    for (var r = 0; r < 3; r++) {
+      for (var c = 0; c < 3; c++) {
+        var on = isRow ? r === idx : c === idx;
+        s += '<rect x="' + (8 + c * 48) + '" y="' + (8 + r * 48) + '" width="44" height="44" fill="' +
+             (on ? color : '#F1EDE2') + '" stroke="#6B7568" stroke-width="2"/>';
+      }
+    }
+    return s + '</svg>';
+  }
+  function turnSvg(left) {
+    var path = left
+      ? '<path d="M 52 60 L 52 42 Q 52 32 42 32 L 36 32" stroke="#fff" stroke-width="8" fill="none"/><polygon points="22,32 40,21 40,43" fill="#fff"/>'
+      : '<path d="M 28 60 L 28 42 Q 28 32 38 32 L 44 32" stroke="#fff" stroke-width="8" fill="none"/><polygon points="58,32 40,21 40,43" fill="#fff"/>';
+    return '<svg viewBox="0 0 80 80" width="130" height="130"><circle cx="40" cy="40" r="37" fill="#2C5A8C"/>' + path + '</svg>';
+  }
+  function sceneHtml(itemEmoji, refEmoji, itemOnLeft) {
+    var item = '<span>' + itemEmoji + '</span>';
+    var ref = '<span class="ref">' + refEmoji + '</span>';
+    return '<div class="bq-scene">' + (itemOnLeft ? item + ref : ref + item) + '</div>';
+  }
+
+  /* ── 문제 생성기 ── */
+  var ITEMS = [['⚽', '공'], ['📕', '책'], ['🍎', '사과'], ['🍌', '바나나'], ['🎈', '풍선'], ['⭐', '별']];
+  var REFS = [['🧸', '곰인형'], ['🐶', '강아지'], ['🐰', '토끼']];
+
+  var GEN = {
+    garo: [
+      function () {
+        var h = flip();
+        return { text: '이 막대는 어느 방향으로 놓여 있나요?',
+          visual: barSvg(h, pick(COLORS)), choices: ['가로', '세로'], answer: h ? '가로' : '세로', hint: HINT_GS };
+      },
+      function () {
+        var l = flip();
+        return { text: '이 도화지는 어떻게 놓여 있나요?',
+          visual: paperSvg(l), choices: ['가로', '세로'], answer: l ? '가로' : '세로', hint: HINT_GS };
+      },
+      function () {
+        var row = flip();
+        return { text: '색칠된 줄은 무슨 줄인가요?',
+          visual: gridSvg(row, Math.floor(Math.random() * 3), pick(COLORS)),
+          choices: ['가로줄', '세로줄'], answer: row ? '가로줄' : '세로줄', hint: HINT_GS };
+      }
+    ],
+    oenoreun: [
+      function () {
+        var item = pick(ITEMS), ref = pick(REFS), left = flip();
+        var t = item[1] + '은(는) ' + ref[1] + '의 어느 쪽에 있나요?';
+        return { text: t, visual: sceneHtml(item[0], ref[0], left),
+          choices: ['왼쪽', '오른쪽'], answer: left ? '왼쪽' : '오른쪽', hint: HINT_LR };
+      },
+      function () {
+        var left = flip();
+        return { text: '화살표는 어느 쪽을 가리키나요?',
+          visual: '<div class="bq-arrow">' + (left ? '⬅️' : '➡️') + '</div>',
+          choices: ['왼쪽', '오른쪽'], answer: left ? '왼쪽' : '오른쪽', hint: HINT_LR };
+      }
+    ],
+    jwau: [
+      function () {
+        var jwa = flip();
+        var w = jwa ? '좌' : '우';
+        return { text: "'" + w + "'는 어느 쪽일까요?",
+          visual: '<div class="bq-bigword">' + w + '</div>',
+          choices: ['왼쪽', '오른쪽'], answer: jwa ? '왼쪽' : '오른쪽', hint: HINT_JW };
+      },
+      function () {
+        var jwa = flip();
+        var w = jwa ? '왼쪽' : '오른쪽';
+        return { text: "'" + w + "'을 한 글자로 하면?",
+          visual: '<div class="bq-bigword" style="font-size:44px;">' + w + '</div>',
+          choices: ['좌', '우'], answer: jwa ? '좌' : '우', hint: HINT_JW };
+      },
+      function () {
+        var left = flip();
+        return { text: '이 표지판은 무슨 회전일까요?',
+          visual: turnSvg(left), choices: ['좌회전', '우회전'],
+          answer: left ? '좌회전' : '우회전', hint: HINT_JW };
+      }
+    ]
+  };
+  GEN.mix = GEN.garo.concat(GEN.oenoreun, GEN.jwau);
+
+  var MODES = {
+    garo: { name: '가로 · 세로', cls: 'm1', ic: '↔️', sub: '누웠나, 섰나?' },
+    oenoreun: { name: '왼쪽 · 오른쪽', cls: 'm2', ic: '🫲', sub: '어느 쪽에 있을까?' },
+    jwau: { name: '좌 · 우', cls: 'm3', ic: '🚗', sub: '좌회전? 우회전?' },
+    mix: { name: '모두 섞어서', cls: 'm4', ic: '🌟', sub: '방향 박사 도전!' }
+  };
+
+  /* ── 기록 ── */
+  function loadRecords() {
+    try { return JSON.parse(localStorage.getItem('bq_records') || '[]'); } catch (e) { return []; }
+  }
+  function saveRecord(modeKey, score) {
+    try {
+      var recs = loadRecords();
+      var d = new Date();
+      recs.unshift({ d: (d.getMonth() + 1) + '월 ' + d.getDate() + '일', m: MODES[modeKey].name, s: score });
+      localStorage.setItem('bq_records', JSON.stringify(recs.slice(0, 8)));
+    } catch (e) {}
+  }
+
+  /* ── 홈 화면 ── */
+  function showHome() {
+    var recs = loadRecords();
+    var recHtml = recs.length
+      ? recs.map(function (r) {
+          return '<div class="bq-record"><span>📅 ' + esc(r.d) + ' · ' + esc(r.m) + '</span><b>' +
+                 r.s + '/' + TOTAL + (r.s >= 9 ? ' ⭐' : '') + '</b></div>';
+        }).join('')
+      : '<div class="bq-empty">아직 기록이 없어요. 첫 연습을 시작해 보세요!</div>';
+
+    screenEl.innerHTML =
+      '<h1 class="bq-home-title">어떤 연습을 해 볼까요?</h1>' +
+      '<p class="bq-home-sub">문제 10개 · 버튼을 눌러 시작해요</p>' +
+      '<div class="bq-modes">' +
+      Object.keys(MODES).map(function (k) {
+        var m = MODES[k];
+        return '<button class="bq-mode ' + m.cls + '" data-mode="' + k + '">' +
+               '<span class="ic">' + m.ic + '</span><span>' + m.name +
+               '<span class="sub">' + m.sub + '</span></span></button>';
+      }).join('') +
+      '</div>' +
+      '<div class="bq-records"><h3>📋 연습 기록</h3>' + recHtml + '</div>';
+
+    screenEl.querySelectorAll('.bq-mode').forEach(function (btn) {
+      btn.addEventListener('click', function () { startQuiz(btn.getAttribute('data-mode')); });
+    });
+  }
+
+  /* ── 퀴즈 진행 ── */
+  var state = null;
+
+  function startQuiz(modeKey) {
+    var gens = GEN[modeKey];
+    var questions = [];
+    var lastGen = -1;
+    for (var i = 0; i < TOTAL; i++) {
+      var gi;
+      do { gi = Math.floor(Math.random() * gens.length); }
+      while (gens.length > 1 && gi === lastGen && Math.random() < 0.7);
+      lastGen = gi;
+      questions.push(gens[gi]());
+    }
+    state = { modeKey: modeKey, questions: questions, idx: 0, results: [], firstTry: true };
+    showQuestion();
+  }
+
+  function showQuestion() {
+    var q = state.questions[state.idx];
+    state.firstTry = true;
+
+    var dots = '';
+    for (var i = 0; i < TOTAL; i++) {
+      var cls = 'bq-dot';
+      if (i < state.idx) cls += state.results[i] ? ' ok' : ' retry';
+      else if (i === state.idx) cls += ' now';
+      dots += '<span class="' + cls + '"></span>';
+    }
+
+    var choiceOrder = flip() ? [0, 1] : [1, 0];
+    screenEl.innerHTML =
+      '<div class="bq-progress">' + dots + '</div>' +
+      '<h2 class="bq-qtext">' + esc(q.text) + '</h2>' +
+      '<div class="bq-visual">' + q.visual + '</div>' +
+      '<div class="bq-choices">' +
+      choiceOrder.map(function (ci) {
+        return '<button class="bq-choice" data-val="' + esc(q.choices[ci]) + '">' + esc(q.choices[ci]) + '</button>';
+      }).join('') +
+      '</div>' +
+      '<div class="bq-feedback" id="bq-fb"></div>' +
+      '<button class="bq-quit" id="bq-quit">그만하고 처음으로</button>';
+
+    document.getElementById('bq-quit').addEventListener('click', showHome);
+    screenEl.querySelectorAll('.bq-choice').forEach(function (btn) {
+      btn.addEventListener('click', function () { answer(btn, q); });
+    });
+  }
+
+  function answer(btn, q) {
+    var fb = document.getElementById('bq-fb');
+    var buttons = screenEl.querySelectorAll('.bq-choice');
+    if (btn.getAttribute('data-val') === q.answer) {
+      buttons.forEach(function (b) { b.disabled = true; });
+      btn.classList.add('correct');
+      fb.innerHTML = '<span class="fb-ok">⭕ ' + pick(PRAISE) + '</span>';
+      state.results.push(state.firstTry);
+      setTimeout(function () {
+        state.idx++;
+        if (state.idx >= TOTAL) showResult();
+        else showQuestion();
+      }, 1400);
+    } else {
+      state.firstTry = false;
+      btn.classList.add('wrong');
+      btn.disabled = true;
+      fb.innerHTML = '<span class="fb-no">❌ 괜찮아요, 다시 한번!</span><br>' +
+                     '<span class="bq-hint">💡 ' + q.hint + '</span>';
+    }
+  }
+
+  /* ── 결과 화면 ── */
+  function showResult() {
+    var score = state.results.filter(Boolean).length;
+    saveRecord(state.modeKey, score);
+    var stars, title, msg;
+    if (score >= 9) { stars = '⭐⭐⭐'; title = '방향 박사님이에요!'; msg = '한 번에 거의 다 맞혔어요. 정말 대단해요!'; }
+    else if (score >= 7) { stars = '⭐⭐'; title = '아주 잘했어요!'; msg = '조금만 더 연습하면 별 3개도 문제없어요!'; }
+    else { stars = '⭐'; title = '끝까지 해냈어요!'; msg = '힌트를 기억하면서 한 번 더 해 볼까요?'; }
+
+    screenEl.innerHTML =
+      '<div class="bq-result">' +
+      '<div class="bq-stars">' + stars + '</div>' +
+      '<div class="bq-result-title">' + title + '</div>' +
+      '<p class="bq-result-msg">' + msg + '</p>' +
+      '<div class="bq-result-score">10문제 중 <b style="color:var(--green-deep);">' + score + '개</b>를 한 번에 맞혔어요</div>' +
+      '<button class="bq-again" id="bq-again">한 번 더! 🔁</button>' +
+      '<button class="bq-other" id="bq-home-btn">다른 연습 고르기</button>' +
+      '</div>';
+
+    document.getElementById('bq-again').addEventListener('click', function () { startQuiz(state.modeKey); });
+    document.getElementById('bq-home-btn').addEventListener('click', showHome);
+  }
+
+  showHome();
+})();
+</script>
+
+</body>
+</html>
