@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>방향 쏙쏙 퀴즈 · 사용설명서</title>
+<style>
+  :root {
+    --paper: #FBF7EF;
+    --card: #FFFFFF;
+    --ink: #2F3A33;
+    --ink-soft: #6B7568;
+    --green: #5B8C5A;
+    --green-deep: #3A5A3A;
+    --coral: #E07A5F;
+    --blue: #4A7FB5;
+    --purple: #9B7FC4;
+    --gold: #E0A93E;
+    --line: #D8D2C4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    padding: 28px 16px 60px;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  /* ── 헤더 ── */
+  .head {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+  .head .badge {
+    display: inline-block;
+    background: var(--green-deep); color: #fff;
+    font-size: 14px; font-weight: 700; letter-spacing: .06em;
+    padding: 5px 16px; border-radius: 999px; margin-bottom: 14px;
+  }
+  .head h1 {
+    font-size: 38px; font-weight: 900; color: var(--green-deep);
+    margin: 0; letter-spacing: -.01em;
+  }
+  .head p { font-size: 17px; color: var(--ink-soft); margin: 8px 0 0; }
+  .head .link {
+    display: inline-block; margin-top: 12px;
+    font-size: 14px; font-weight: 700; color: var(--blue);
+    background: #EEF4FB; border: 2px solid var(--blue);
+    padding: 7px 16px; border-radius: 12px; text-decoration: none;
+  }
+
+  /* ── 공통 카드 ── */
+  .card {
+    background: var(--card);
+    border: 3px solid var(--line);
+    border-radius: 22px;
+    padding: 24px 24px;
+    box-shadow: 0 6px 0 rgba(58,90,58,.10);
+    margin-bottom: 22px;
+  }
+  .sec-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 22px; font-weight: 900; color: var(--green-deep);
+    margin: 0 0 16px;
+  }
+  .sec-title .n {
+    flex: none;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--green); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900;
+  }
+
+  /* ── 3단계 흐름 ── */
+  .flow { display: flex; align-items: stretch; gap: 10px; }
+  .step {
+    flex: 1; text-align: center;
+    background: var(--paper); border: 2px solid var(--line);
+    border-radius: 16px; padding: 16px 10px;
+  }
+  .step .emoji { font-size: 38px; line-height: 1; }
+  .step .t { font-size: 17px; font-weight: 800; margin: 8px 0 2px; }
+  .step .d { font-size: 13px; color: var(--ink-soft); }
+  .flow .arw { align-self: center; font-size: 26px; color: var(--ink-soft); }
+
+  /* ── 모드 그리드 ── */
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .mode {
+    display: flex; align-items: center; gap: 14px;
+    border: 3px solid; border-radius: 18px;
+    padding: 14px 16px; background: var(--card);
+  }
+  .mode .ic { font-size: 32px; flex: none; }
+  .mode .nm { font-size: 20px; font-weight: 900; }
+  .mode .sb { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+  .mode.m1 { border-color: var(--coral); }
+  .mode.m2 { border-color: var(--blue); }
+  .mode.m3 { border-color: var(--purple); }
+  .mode.m4 { border-color: var(--green); }
+
+  /* ── 점 표시 설명 ── */
+  .dots-legend { display: flex; flex-direction: column; gap: 12px; }
+  .leg { display: flex; align-items: center; gap: 14px; }
+  .dot { width: 22px; height: 22px; border-radius: 50%; flex: none; border: 2px solid var(--line); }
+  .dot.now { border-color: var(--green); background: #fff; }
+  .dot.ok { background: var(--green); border-color: var(--green); }
+  .dot.retry { background: var(--coral); border-color: var(--coral); }
+  .leg .txt { font-size: 16px; }
+  .leg .txt b { font-weight: 800; }
+
+  /* ── 별점 표 ── */
+  .stars-row { display: flex; gap: 12px; }
+  .star-box {
+    flex: 1; text-align: center;
+    border: 2px solid var(--line); border-radius: 16px; padding: 14px 8px;
+    background: var(--paper);
+  }
+  .star-box .s { font-size: 26px; letter-spacing: 2px; }
+  .star-box .cond { font-size: 15px; font-weight: 800; color: var(--green-deep); margin-top: 6px; }
+  .star-box .who { font-size: 13px; color: var(--ink-soft); }
+
+  /* ── 힌트 ── */
+  .hints { display: flex; flex-direction: column; gap: 10px; }
+  .hint {
+    background: #EEF4FB; border: 2px dashed var(--blue); border-radius: 12px;
+    padding: 10px 14px; font-size: 15px; font-weight: 600;
+  }
+  .hint b { color: var(--green-deep); }
+
+  /* ── 팁 목록 ── */
+  ul.tips { margin: 0; padding-left: 4px; list-style: none; }
+  ul.tips li {
+    position: relative; padding: 6px 0 6px 30px; font-size: 16px;
+    border-bottom: 1px dashed var(--line);
+  }
+  ul.tips li:last-child { border-bottom: none; }
+  ul.tips li::before {
+    content: "✓"; position: absolute; left: 4px; top: 6px;
+    color: var(--green); font-weight: 900;
+  }
+  ul.tips b { color: var(--green-deep); }
+
+  .note {
+    background: #FDF6EC; border: 2px solid var(--gold); border-radius: 14px;
+    padding: 12px 16px; font-size: 15px; margin-top: 4px;
+  }
+  .note b { color: #B8801E; }
+
+  .foot {
+    text-align: center; color: var(--ink-soft); font-size: 13px;
+    margin-top: 30px;
+  }
+
+  @media (max-width: 560px) {
+    .head h1 { font-size: 30px; }
+    .modes { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; }
+    .flow .arw { transform: rotate(90deg); }
+    .stars-row { flex-direction: column; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .card { box-shadow: none; break-inside: avoid; }
+    .head .link { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <span class="badge">사용설명서</span>
+    <h1>🧭 방향 쏙쏙 퀴즈</h1>
+    <p>가로·세로, 왼쪽·오른쪽, 좌·우 — 방향 어휘를 놀이처럼 반복 연습해요</p>
+    <a class="link" href="https://slp-irudassam.github.io/direction-vocab-quiz/" target="_blank">▶ 지금 바로 열기</a>
+  </div>
+
+  <!-- 1. 이렇게 진행돼요 -->
+  <div class="card">
+    <h2 class="sec-title"><span class="n">1</span> 이렇게 진행돼요</h2>
+    <div class="flow">
+      <div class="step">
+        <div class="emoji">👆</div>
+        <div class="t">모드 고르기</div>
+        <div class="d">4가지 중 하나를 눌러요</div>
+      </div>
+      <div class="arw">→</div>
+      <div class="step">
+        <div class="emoji">🔟</div>
+        <div class="t">문제 10개 풀기</div>
+        <div class="d">둘 중 맞는 답을 눌러요</div>
+      </div>
+      <div class="arw">→</div>
+      <div class="step">
+        <div class="emoji">⭐</div>
+        <div class="t">별점 확인</div>
+        <div class="d">결과를 보고 다시 도전!</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px;">
+      💡 <b>틀려도 괜찮아요.</b> 오답을 누르면 힌트가 나오고, 맞을 때까지 다시 고를 수 있어요. 그래서 끝까지 스스로 정답을 찾게 돼요.
+    </div>
+  </div>
+
+  <!-- 2. 4가지 연습 모드 -->
+  <div class="card">
+    <h2 class="sec-title"><span class="n">2</span> 4가지 연습 모드</h2>
+    <div class="modes">
+      <div class="mode m1"><span class="ic">↔️</span><span><span class="nm">가로 · 세로</span><span class="sb">막대·도화지·격자가 누웠나 섰나?</span></span></div>
+      <div class="mode m2"><span class="ic">🫲</span><span><span class="nm">왼쪽 · 오른쪽</span><span class="sb">물건이 어느 쪽에 있을까?</span></span></div>
+      <div class="mode m3"><span class="ic">🚗</span><span><span class="nm">좌 · 우</span><span class="sb">'좌·우' 한 글자, 좌회전·우회전</span></span></div>
+      <div class="mode m4"><span class="ic">🌟</span><span><span class="nm">모두 섞어서</span><span class="sb">세 가지를 랜덤으로 — 방향 박사 도전!</span></span></div>
+    </div>
+  </div>
+
+  <!-- 3. 위쪽 점의 의미 -->
+  <div class="card">
+    <h2 class="sec-title"><span class="n">3</span> 위쪽 점(●●●)의 의미</h2>
+    <div class="dots-legend">
+      <div class="leg"><span class="dot now"></span><span class="txt"><b>지금 푸는 문제</b> — 초록 테두리 빈 점</span></div>
+      <div class="leg"><span class="dot ok"></span><span class="txt"><b>한 번에 맞힘</b> — 초록으로 꽉 찬 점 (점수 ✔)</span></div>
+      <div class="leg"><span class="dot retry"></span><span class="txt"><b>다시 풀어서 맞힘</b> — 주황 점 (점수엔 미포함)</span></div>
+    </div>
+    <div class="note" style="margin-top:16px;">
+      점수는 <b>'한 번에 맞힌 개수'</b>로만 계산돼요. 오답 후 맞혀도 정답 처리는 되지만, 별점 점수에는 들어가지 않아요.
+    </div>
+  </div>
+
+  <!-- 4. 별점 기준 -->
+  <div class="card">
+    <h2 class="sec-title"><span class="n">4</span> 별점 기준 (10문제 중)</h2>
+    <div class="stars-row">
+      <div class="star-box"><div class="s">⭐⭐⭐</div><div class="cond">9~10개</div><div class="who">방향 박사님!</div></div>
+      <div class="star-box"><div class="s">⭐⭐</div><div class="cond">7~8개</div><div class="who">아주 잘했어요</div></div>
+      <div class="star-box"><div class="s">⭐</div><div class="cond">6개 이하</div><div class="who">끝까지 해냈어요</div></div>
+    </div>
+  </div>
+
+  <!-- 5. 나오는 힌트 -->
+  <div class="card">
+    <h2 class="sec-title"><span class="n">5</span> 아이에게 나오는 힌트</h2>
+    <div class="hints">
+      <div class="hint"><b>가로·세로</b> · 누워 있으면 가로 🛌, 서 있으면 세로 🧍</div>
+      <div class="hint"><b>왼쪽·오른쪽</b> · 심장이 콩닥콩닥 뛰는 쪽이 왼쪽이에요 ❤️</div>
+      <div class="hint"><b>좌·우</b> · "우~!" 하면 "오른쪽!" 좌는 남은 쪽, 왼쪽!</div>
+    </div>
+  </div>
+
+  <!-- 6. 연습 기록 -->
+  <div class="card">
+    <h2 class="sec-title"><span class="n">6</span> 연습 기록 📋</h2>
+    <p style="margin:0;font-size:16px;">
+      홈 화면 아래에 최근 <b>8회</b>까지 날짜·모드·점수가 자동으로 남아요.
+      9개 이상 맞힌 회차엔 ⭐ 표시가 붙어요.
+    </p>
+    <div class="note" style="margin-top:14px;">
+      ⚠️ 기록은 <b>그 기기(브라우저)에만</b> 저장돼요. 다른 기기에서는 이어지지 않고, 브라우저 기록을 지우면 사라져요.
+    </div>
+  </div>
+
+  <!-- 7. 활용 팁 -->
+  <div class="card">
+    <h2 class="sec-title"><span class="n">7</span> 선생님·부모님 활용 팁</h2>
+    <ul class="tips">
+      <li>처음엔 <b>한 종류씩</b> (가로·세로 → 왼쪽·오른쪽 → 좌·우), 익숙해지면 <b>'모두 섞어서'</b>로 넘어가세요.</li>
+      <li>답을 고르기 전에 <b>손으로 방향을 직접 가리키며</b> 말로 표현하게 하면 어휘가 더 잘 붙어요.</li>
+      <li>틀렸을 때 나오는 <b>힌트 문장을 함께 소리 내어</b> 읽고 다시 고르게 해 보세요.</li>
+      <li>같은 모드를 <b>반복</b>하며 별 3개가 나오면, 점수 대신 "얼마나 빨리 맞히나"로 목표를 바꿔 보세요.</li>
+      <li>설치 없이 <b>링크만 열면</b> 되고, 휴대폰·태블릿·PC 어디서나 작동해요.</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    🧭 방향 쏙쏙 퀴즈 · 이루다쌤 학습자료 &nbsp;|&nbsp; slp-irudassam.github.io/direction-vocab-quiz
+  </div>
+
+</div>
+</body>
+</html>
